@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RayGain Physiotherapy Clinic</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-bg">
+    <div class="login-container">
+        <h1>Login - RayGain Physiotherapy Clinic</h1>
+        <div class="login-options">
+            <div class="login-card" id="patientLoginCard">
+                <img src="images/patient profile.png" alt="Patient Profile Icon" class="login-profile-icon">
+                <span class="icon patient"></span>
+                <h2>Login as Patient</h2>
+                <form id="patientLoginForm">
+                    <input type="text" name="patientId" id="patientId" placeholder="Patient ID" required>
+                    <input type="password" name="patientPasscode" id="patientPasscode" placeholder="Passcode" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+            <div class="login-card" id="therapistLoginCard">
+                <img src="images/patient profile.png" alt="Therapist Profile Icon" class="login-profile-icon">
+                <span class="icon therapist"></span>
+                <h2>Login as Therapist</h2>
+                <form id="therapistLoginForm">
+                    <input type="password" name="therapistPasscode" id="therapistPasscode" placeholder="Passcode" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="passcodeErrorModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:9999;">
+        <div style="background:#fff;padding:2rem;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.2);text-align:center;max-width:300px;">
+            <h3 style="color:#c00;margin-bottom:1rem;">Incorrect</h3>
+            <p id="errorMessage">Wrong passcode, please try again or contact your admin.</p>
+            <button id="closePasscodeError" style="margin-top:1rem;padding:0.5rem 1rem;">Try Again</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL6rvtbGZoWOQxm2o3fYxvFniwKz9GpXM",
+            authDomain: "raygain-cf637.firebaseapp.com",
+            projectId: "raygain-cf637",
+            storageBucket: "raygain-cf637.firebasestorage.app",
+            messagingSenderId: "258723115236",
+            appId: "1:258723115236:web:766902037a28c178e6fcf1",
+            measurementId: "G-7DXLCJCLVE"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const THERAPIST_PASSCODE = "BARBEQUE";
+
+        // Show error modal
+        function showError(message) {
+            const modal = document.getElementById('passcodeErrorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            modal.style.display = 'flex';
+        }
+
+        // Close error modal
+        document.getElementById('closePasscodeError').onclick = function() {
+            document.getElementById('passcodeErrorModal').style.display = 'none';
+        };
+
+        // Therapist Login with Simple Passcode Check
+        document.getElementById('therapistLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const passcode = document.getElementById('therapistPasscode').value;
+
+            if (passcode === THERAPIST_PASSCODE) {
+                sessionStorage.setItem('userType', 'therapist');
+                sessionStorage.setItem('therapistAuth', 'true');
+                window.location.href = 'therapist-dashboard.html';
+            } else {
+                showError('Incorrect Passcode! Try again or contact your admin.');
+            }
+        });
+
+        // Patient Login with Firebase
+        document.getElementById('patientLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const patientId = document.getElementById('patientId').value;
+            const passcode = document.getElementById('patientPasscode').value;
+
+            try {
+                const querySnapshot = await db.collection('patients')
+                    .where('patientId', '==', patientId)
+                    .where('passcode', '==', passcode)
+                    .get();
+
+                if (!querySnapshot.empty) {
+                    const patientDoc = querySnapshot.docs[0];
+                    sessionStorage.setItem('userType', 'patient');
+                    sessionStorage.setItem('patientId', patientId);
+                    sessionStorage.setItem('patientDocId', patientDoc.id);
+                    window.location.href = 'patient-dashboard.html';
+                } else {
+                    showError('Wrong passcode, please try again or contact your admin.');
+                }
+            } catch (error) {
+                console.error('Patient login error:', error);
+                showError('Wrong passcode, please try again or contact your admin.');
+            }
+        });
+    </script>
+</body>
+</html>

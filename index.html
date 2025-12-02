@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RayGain Physiotherapy Clinic</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="inquiries-container">
+        <header>
+            <h1>INQUIRIES - RayGain Physiotherapy Clinic</h1>
+            <p class="desc">GET CARE Helping you move better, recover, faster and live pain-free</p>
+            <img src="images/img clinic.png" alt="Physiotherapy Image" class="header-image">
+        </header>
+        <section class="services">
+            <h2>Our Core Services</h2>
+            <ul>
+                <li><strong>Musculoskeletal Rehabilitation:</strong> Treatment for muscle, joint, bone, tendon, or ligament issues (e.g., back pain, sprains, arthritis).</li>
+                <li><strong>Post-Surgical Rehabilitation:</strong> Recovery support after surgeries like knee replacement, rotator cuff repair, spinal surgery, etc.</li>
+                <li><strong>Sports Injury Rehabilitation:</strong> Prevention and recovery from athletic injuries (e.g., ACL tears, tennis elbow, shin splints).</li>
+                <li><strong>Neurological Physiotherapy:</strong> Treatment for conditions like stroke, Parkinson's disease, multiple sclerosis, and spinal cord injuries.</li>
+                <li><strong>Orthopedic Physiotherapy:</strong> Focus on bones, joints, ligaments, and muscles — often after fractures, joint replacements, or trauma.</li>
+                <li><strong>Manual Therapy:</strong> Hands-on techniques including joint mobilization, manipulation, and soft tissue massage.</li>
+                <li><strong>Pain Management:</strong> Non-drug therapies to manage chronic pain (e.g., neck pain, fibromyalgia, sciatica).</li>
+            </ul>
+        </section>
+        <section class="contact">
+            <h2>Contact Us</h2>
+            <div class="contact-row">
+                <div class="contact-details">
+                    <div><img src="images/location.png" alt="Location Icon" class="contact-icon"> Butol Santiago, Ilocos Sur Philippines</div>
+                    <div><img src="images/phone icon.png" alt="Phone Icon" class="contact-icon"> 09267403230</div>
+                    <div><img src="images/email icon.png" alt="Email Icon" class="contact-icon"> RayGain@gmail.com</div>
+                    <div><img src="images/profile.png" alt="Profile Icon" class="contact-icon"> Jeanna M. Rayray PTRP</div>
+                </div>
+                <div class="map-pin">
+                    <img src="images/map.png" alt="Map Butol, Santiago Ilocos Sur Philippines" />
+                    <span class="pin"></span>
+                </div>
+            </div>
+        </section>
+        <button id="inquireBtn">INQUIRE NOW</button>
+        <div id="inquiryFormModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <form id="inquiryForm">
+                    <h2>Physiotherapy Consent Form</h2>
+                    <div class="form-row">
+                        <input type="text" name="firstName" placeholder="First Name" required autocomplete="given-name">
+                        <input type="text" name="middleName" placeholder="Middle Name" autocomplete="off">
+                        <input type="text" name="lastName" placeholder="Last Name" required autocomplete="family-name">
+                    </div>
+                    <div class="form-row">
+                        <input type="email" name="email" placeholder="Gmail/Yahoo (not required)" autocomplete="email">
+                        <input type="text" name="contactNumber" placeholder="Phone Number" required autocomplete="tel">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" name="address" placeholder="Address" required autocomplete="street-address">
+                        <input type="number" name="age" placeholder="Age" required min="0">
+
+                    </div>
+                    <div class="form-row">
+                        <textarea name="caseHistory" placeholder="Case History of patient" required></textarea>
+                    </div>
+                    <h3>Emergency Contact Information</h3>
+                    <div class="form-row">
+                        <input type="text" name="emergencyFirstName" placeholder="First Name" required autocomplete="given-name">
+                        <input type="text" name="emergencyLastName" placeholder="Last Name" required autocomplete="family-name">
+                    </div>
+                    <div class="form-row">
+                        <input type="email" name="emergencyEmail" placeholder="Gmail/Yahoo (not required)" autocomplete="email">
+                        <input type="text" name="emergencyContactNumber" placeholder="Phone Number" required autocomplete="tel">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" name="emergencyRelation" placeholder="Relation" required autocomplete="off">
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN (Compat version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL6rvtbGZoWOQxm2o3fYxvFniwKz9GpXM",
+            authDomain: "raygain-cf637.firebaseapp.com",
+            projectId: "raygain-cf637",
+            storageBucket: "raygain-cf637.firebasestorage.app",
+            messagingSenderId: "258723115236",
+            appId: "1:258723115236:web:766902037a28c178e6fcf1",
+            measurementId: "G-7DXLCJCLVE"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Modal controls
+        const inquireBtn = document.getElementById('inquireBtn');
+        const modal = document.getElementById('inquiryFormModal');
+        const closeModal = document.getElementById('closeModal');
+
+        inquireBtn.onclick = function() {
+            modal.style.display = 'block';
+        };
+        closeModal.onclick = function() {
+            modal.style.display = 'none';
+        };
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Helper to compute age from DOB
+        // Handle inquiry form submission (uses age input from the form)
+        document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const age = formData.get('age');
+
+            const inquiryData = {
+                firstName: formData.get('firstName'),
+                middleName: formData.get('middleName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                contactNumber: formData.get('contactNumber'),
+                address: formData.get('address'),
+                age: age,
+                caseHistory: formData.get('caseHistory'),
+                emergencyContactName: formData.get('emergencyFirstName') + ' ' + formData.get('emergencyLastName'),
+                emergencyContactNumber: formData.get('emergencyContactNumber'),
+                emergencyContactRelation: formData.get('emergencyRelation'),
+                emergencyContactEmail: formData.get('emergencyEmail'),
+                createdAt: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            try {
+                await db.collection('inquiries').add(inquiryData);
+                alert('Inquiry submitted successfully! We will contact you soon.');
+                e.target.reset();
+                modal.style.display = 'none';
+            } catch (error) {
+                console.error('Error submitting inquiry:', error);
+                alert('Error submitting inquiry. Please try again or contact us directly.');
+            }
+        });
+    </script>
+</body>
+</html>

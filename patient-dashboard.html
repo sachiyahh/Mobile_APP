@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - RayGain Physiotherapy Clinic</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="#" id="analyticsBtn">Data Analytics</a></li>
+                <li><a href="#" id="appointmentsBtn">Appointment</a></li>
+                <li><a href="#" id="logoutBtn">Log Out</a></li>
+            </ul>
+        </aside>
+        <main class="dashboard-main">
+            <div id="patientHeader" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 14px;background:#f7fafb;border:1px solid #e0e7ea;border-radius:8px;">
+                <div style="font-size:1.1rem;font-weight:700;color:#0b7d7c;"><span id="patientProfileName">Patient</span></div>
+                <div style="font-size:0.95rem;color:#2b3a42;">ID: <span id="patientProfileNumber"></span></div>
+            </div>
+            <section class="data-analytics" id="analyticsSection">
+                <h1>Patient Dashboard</h1>
+                <div class="analytics-cards">
+                    <div class="card">
+                        <h3>Number of Treatments</h3>
+                        <p id="treatmentsCount">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Pain Scale</h3>
+                        <div class="pain-scale">
+                            <span id="painScaleLabel">Mild</span>
+                            <input type="range" min="0" max="10" value="2" id="painScale" disabled>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Improvement</h3>
+                        <div class="improvement-scale">
+                            <span id="improvementLabel">Moderate</span>
+                            <input type="range" min="0" max="10" value="5" id="improvementScale" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="analytics-bargraph">
+                    <h3>ROM, Strength</h3>
+                    <canvas id="romStrengthChart" width="400" height="120"></canvas>
+                </div>
+            </section>
+            <section class="medical-records" id="medicalRecordsSection" style="margin-top:32px;">
+                <div class="medical-records-header">My Medical Records</div>
+                <table class="medical-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Treatment Time</th>
+                            <th>Attend</th>
+                            <th>Diagnosis</th>
+                            <th>Pain</th>
+                            <th>Location</th>
+                            <th>Subjective</th>
+                            <th>Functional %</th>
+                            <th>Functional Notes</th>
+                            <th>Goal Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicalTableBody">
+                        <!-- Medical records will be populated here -->
+                    </tbody>
+                </table>
+            </section>
+            <section class="appointments" id="appointmentsSection" style="display:none;">
+                <h2>Appointments</h2>
+                <div class="calendar-controls" style="margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+                    <button id="patientPrevMonth" class="btn">&lt;</button>
+                    <span id="patientMonthLabel" class="month-label" style="min-width:160px;font-weight:600;"></span>
+                    <button id="patientNextMonth" class="btn">&gt;</button>
+                </div>
+                <section class="calendar" id="patientCalendarGrid"></section>
+                <div id="patientCalendarLegend" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:16px; font-size:0.85rem; align-items:center;">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="width:16px;height:16px;border-radius:4px;background:#3b8132;display:inline-block;"></span> Home Session
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="width:16px;height:16px;border-radius:4px;background:#007bff;display:inline-block;"></span> Clinic Session
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+                        <label style="display:flex;align-items:center;gap:4px;">
+                            <input type="checkbox" id="filterHome" checked> Home
+                        </label>
+                        <label style="display:flex;align-items:center;gap:4px;">
+                            <input type="checkbox" id="filterClinic" checked> Clinic
+                        </label>
+                    </div>
+                </div>
+                <div id="patientFloatingCard" class="floating-card hidden" style="display:none;" role="dialog" aria-live="polite">
+                    <div class="floating-header" style="display:flex;justify-content:space-between;align-items:center;">
+                        <strong id="pfcName">Patient</strong>
+                        <button id="pfcClose" class="icon-btn" aria-label="Close">✖</button>
+                    </div>
+                    <div class="floating-body">
+                        <div class="row"><span class="label">Session:</span> <span id="pfcType"></span></div>
+                        <div class="row"><span class="label">Date:</span> <span id="pfcDate"></span></div>
+                        <div class="row"><span class="label">Notes:</span> <span id="pfcDesc"></span></div>
+                        <div class="row" id="pfcEditRow" style="margin-top:8px;display:none;flex-direction:column;gap:4px;">
+                            <label for="pfcEditDescription" style="font-size:0.75rem;color:#555;">Edit Description</label>
+                            <textarea id="pfcEditDescription" rows="2" style="width:100%;resize:vertical;padding:6px;font-size:0.8rem;border:1px solid #d0d7da;border-radius:4px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="floating-actions" id="pfcActions" style="display:none;gap:8px;margin-top:8px;">
+                        <button id="pfcSave" class="btn primary" style="padding:6px 10px;">Save</button>
+                        <button id="pfcDelete" class="btn danger" style="padding:6px 10px;">Delete</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <!-- Modal for viewing a single record in detail -->
+    <div id="viewRecordModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
+        <div class="modal-content" style="background:#fff; padding:1.5rem 1.75rem; border-radius:10px; min-width:320px; max-width:90vw; max-height:85vh; overflow:auto; position:relative;">
+            <button id="closeViewRecordModal" style="position:absolute; top:0.6rem; right:0.6rem; font-size:1.1rem; background:none; border:none; cursor:pointer;">✖</button>
+            <h2 style="margin-top:0;">Record Details</h2>
+            <div id="recordDetails" style="margin-top:0.75rem; font-size:0.95rem; line-height:1.4;"></div>
+        </div>
+    </div>
+    <!-- Firebase & Chart.js CDN (compat build to avoid module import errors) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Switch to non-module script (compat version) -->
+    <script src="patient-dashboard.js"></script>
+</body>
+</html>

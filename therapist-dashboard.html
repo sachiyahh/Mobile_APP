@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapist Dashboard - RayGain Physiotherapy Clinic</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="#" id="dashboardBtn">Dashboard</a></li>
+                <li><a href="#" id="pendingPatientsBtn">Pending Patients</a></li>
+                <li><a href="#" id="patientListBtn">Patient List</a></li>
+                <li><a href="#" id="appointmentsBtn">Appointments</a></li>
+                <li><a href="#" id="logoutBtn">Log Out</a></li>
+            </ul>
+        </aside>
+        <main class="dashboard-main">
+
+            
+        <!-- RAYGAIN DATA / ANALYTICS -->
+            
+            <section class="raygain-data-analytics" id="raygainDataSection">
+  <h2>RayGain Data</h2>
+  <div class="analytics-row">
+    <div class="analytics-widget">
+      <h3>Total Patients</h3>
+      <div id="totalPatientsCount" class="analytics-value"></div>
+    </div>
+    <div class="analytics-widget">
+      <h3>Pending Patients</h3>
+      <div id="pendingPatientsCount" class="analytics-value"></div>
+    </div>
+    <div class="analytics-widget">
+    <h3>Appointments</h3>
+      <div id="appointmentsCount" class="analytics-value"></div>
+    </div>
+  </div>
+  <div class="analytics-row">
+    <div class="analytics-widget" style="width:100%;max-width:600px;">
+      <h3>Common Cases</h3>
+      <canvas id="commonCasesChart" width="450" height="180"></canvas>
+    </div>
+  </div>
+    <!-- Generate Report moved under Dashboard -->
+    <div class="report-area" style="margin-top:1rem;">
+        <h3>Generate Report</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;">
+            <label for="reportRangeSelect" style="font-size:0.9rem;font-weight:600;color:#14384b;">Range:</label>
+            <select id="reportRangeSelect" class="btn" style="min-width:140px;padding:6px 8px;background:#fff;color:#14384b;border:1px solid #d0d7da;">
+                <option value="weekly">Last 7 Days</option>
+                <option value="monthly">This Month</option>
+                <option value="yearly">This Year</option>
+            </select>
+            <span id="reportRangeLabel" style="font-size:0.8rem;color:#555;">Last 7 Days</span>
+        </div>
+        <button id="openReportBtn" class="btn">Open Report</button>
+    </div>
+</section>
+
+<!-- PENDING PATIENTS -->
+
+            <section class="pending-inquiries" id="pendingInquiriesSection">
+                <h2>Pending Patients</h2>
+                <table class="inquiries-table">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Contact</th>
+                            <th>Age</th>
+                            <th>Case History</th>
+                            <th>Emergency Contact</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inquiriesTableBody">
+                        <!-- Inquiry rows will be populated here -->
+                    </tbody>
+                </table>
+            </section>
+            
+            <section class="patient-list" id="patientListSection" style="display:none;">
+                <h2>Patient List</h2>
+                <table class="patient-table">
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Age</th>
+                            <th>Case</th>
+                            <th>Medical Records</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientTableBody">
+                        <!-- Patient rows will be populated here -->
+                    </tbody>
+                </table>
+            </section>
+
+    <!-- CALENDAR SECTION -->
+            <section class="calendar-section" id="clinicCalendarSection">
+                <h2>Schedule Clinic Session</h2>
+                <div class="calendar-controls">
+                    <button id="prevMonth" class="btn">&lt;</button>
+                    <span id="monthLabel" class="month-label"></span>
+                    <button id="nextMonth" class="btn">&gt;</button>
+                    <button id="addScheduleBtn" class="btn primary">Add Schedule</button>
+                </div>
+                <section class="calendar" id="calendar"></section>
+                <div id="scheduleModal" class="modal hidden" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="modalTitle">Add Schedule</h2>
+                            <button id="closeModal" class="icon-btn" aria-label="Close">✖</button>
+                        </div>
+                        <form id="scheduleForm" class="form">
+                            <div class="form-row">
+                                <label for="patientSelect">Patient</label>
+                                <select id="patientSelect" name="patientSelect" required>
+                                    <option value="" disabled selected>Select Patient</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label for="description">Description</label>
+                                <input id="description" name="description" type="text" placeholder="Reason/notes">
+                            </div>
+                            <div class="form-row">
+                                <label for="date">Date</label>
+                                <input id="date" name="date" type="date" required>
+                            </div>
+                            <fieldset class="form-row">
+                                <legend>Type of Session</legend>
+                                <label class="radio"><input type="radio" name="sessionType" value="Home" checked> Home</label>
+                                <label class="radio"><input type="radio" name="sessionType" value="Clinic"> Clinic</label>
+                            </fieldset>
+                            <div class="modal-actions">
+                                <button type="submit" class="btn primary">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="floatingCard" class="floating-card hidden" role="dialog" aria-live="polite">
+                    <div class="floating-header">
+                        <strong id="fcName">Patient</strong>
+                        <button id="fcClose" class="icon-btn" aria-label="Close">✖</button>
+                    </div>
+                    <div class="floating-body">
+                        <div class="row"><span class="label">Session:</span> <span id="fcType"></span></div>
+                        <div class="row"><span class="label">Date:</span> <span id="fcDate"></span></div>
+                        <div class="row"><span class="label">Notes:</span> <span id="fcDesc"></span></div>
+                    </div>
+                    <div class="floating-actions">
+                        <button id="fcDelete" class="btn danger">Delete Schedule</button>
+                    </div>
+                </div>
+            </section>
+            </main>
+                <!-- Modal for Viewing Patient Records -->
+                <div id="viewRecordModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
+                    <div class="modal-content" style="background:#fff; padding:2rem; border-radius:8px; min-width:320px; max-width:90vw; position:relative;">
+                        <button id="closeViewRecordModal" style="position:absolute; top:1rem; right:1rem; font-size:1.2rem; background:none; border:none; cursor:pointer;">✖</button>
+                        <h2>Patient Record</h2>
+                        <div id="recordDetails" style="margin-top:1rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+                    <!-- Report Preview Modal -->
+                    <div id="reportPreviewModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; z-index:10000;">
+                        <div class="modal-content" style="background:#fff; padding:1rem 1.5rem; border-radius:8px; min-width:360px; max-width:95vw; max-height:90vh; overflow:auto; position:relative;">
+                            <button id="closeReportPreviewModal" style="position:absolute; top:0.8rem; right:0.8rem; font-size:1.1rem; background:none; border:none; cursor:pointer;">✖</button>
+                            <h2>Export Preview</h2>
+                            <div style="display:flex;gap:8px;margin-bottom:8px;" class="controls">
+                                <button id="downloadExcelFromPreview" class="btn">Download Excel</button>
+                                <button id="downloadCsvFromPreview" class="btn">Download CSV</button>
+                                <button id="printPreviewBtn" class="btn">Print (Portrait)</button>
+                                <button id="printPreviewLandscapeBtn" class="btn primary">Print (Landscape)</button>
+                            </div>
+                            <div id="reportPreviewContent" style="font-size:0.95rem;"></div>
+                        </div>
+                    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script>
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAL6rvtbGZoWOQxm2o3fYxvFniwKz9GpXM",
+        authDomain: "raygain-cf637.firebaseapp.com",
+        projectId: "raygain-cf637",
+        storageBucket: "raygain-cf637.firebasestorage.app",
+        messagingSenderId: "258723115236",
+        appId: "1:258723115236:web:766902037a28c178e6fcf1",
+        measurementId: "G-7DXLCJCLVE"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Sidebar navigation
+    document.getElementById('dashboardBtn').onclick = () => showSection('raygainDataSection');
+    document.getElementById('pendingPatientsBtn').onclick = () => showSection('pendingInquiriesSection');
+    document.getElementById('patientListBtn').onclick = () => { showSection('patientListSection'); };
+    document.getElementById('appointmentsBtn').onclick = () => showSection('clinicCalendarSection');
+    document.getElementById('logoutBtn').onclick = () => {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+    };
+    function showSection(id) {
+        const sections = ['raygainDataSection','pendingInquiriesSection','patientListSection','clinicCalendarSection'];
+        sections.forEach(secId => {
+            const el = document.getElementById(secId);
+            if (el) el.style.display = (secId === id ? 'block' : 'none');
+        });
+    }
+    // Default view or override via query param ?section=patientList etc.
+    (function(){
+        const params = new URLSearchParams(window.location.search);
+        const sec = params.get('section');
+        if(sec === 'patientList') {
+            showSection('patientListSection');
+        } else if (sec === 'pending') {
+            showSection('pendingInquiriesSection');
+        } else if (sec === 'appointments') {
+            showSection('clinicCalendarSection');
+        } else {
+            showSection('raygainDataSection');
+        }
+    })();
+
+    // Load Pending Inquiries
+    async function loadPendingInquiries() {
+        try {
+            const snapshot = await db.collection('inquiries').get();
+            const inquiriesTableBody = document.getElementById('inquiriesTableBody');
+            inquiriesTableBody.innerHTML = '';
+            snapshot.forEach(doc => {
+                const inquiry = doc.data();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${inquiry.firstName || inquiry.name || ''}</td>
+                    <td>${inquiry.middleName || ''}</td>
+                    <td>${inquiry.lastName || ''}</td>
+                    <td>${inquiry.contactNumber || inquiry.contact || inquiry.phone || inquiry.email || ''}</td>
+                    <td>${inquiry.age || ''}</td>
+                    <td>${inquiry.caseHistory || inquiry.message || ''}</td>
+                    <td>${inquiry.emergencyContactName || inquiry.emergencyContact || ''}</td>
+                    <td>
+                        <button data-id="${doc.id}" class="addPatientBtn">Add</button>
+                        <button onclick="deleteInquiry('${doc.id}')">Delete</button>
+                    </td>
+                `;
+                inquiriesTableBody.appendChild(row);
+            });
+            document.querySelectorAll('.addPatientBtn').forEach(function(btn){
+                btn.onclick = async function(){
+                    const id = btn.getAttribute('data-id');
+                    const row = btn.closest('tr').children;
+                    const inquiryData = {
+                        firstName: row[0].innerText,
+                        middleName: row[1].innerText,
+                        lastName: row[2].innerText,
+                        contactNumber: row[3].innerText,
+                        age: row[4].innerText,
+                        caseHistory: row[5].innerText,
+                        emergencyContactName: row[6].innerText
+                    };
+                    await acceptInquiry(id, inquiryData);
+                };
+            });
+            await updateRayGainAnalytics();
+        } catch (error) {
+            console.error('Error loading inquiries:', error);
+        }
+    }
+
+    // Generate Patient ID: format 0001P, 0002P, etc.
+    async function generateNextPatientId() {
+        const snapshot = await db.collection('patients').get();
+        const count = snapshot.size + 1;
+        return count.toString().padStart(4, '0') + 'P';
+    }
+
+    // Accept Inquiry to Patient List and Auto ID
+    window.acceptInquiry = async function(inquiryId, inquiryData) {
+        try {
+            const patientId = await generateNextPatientId();
+            const passcode = Math.floor(100000 + Math.random() * 900000).toString();
+            const patientData = {
+                patientId: patientId,
+                firstName: inquiryData.firstName,
+                middleName: inquiryData.middleName,
+                lastName: inquiryData.lastName,
+                age: inquiryData.age,
+                contact: inquiryData.contactNumber,
+                caseHistory: inquiryData.caseHistory,
+                // Fix: use the captured emergencyContactName field from inquiryData
+                emergencyContact: inquiryData.emergencyContactName || '',
+                passcode: passcode,
+                createdAt: new Date().toISOString()
+            };
+            await db.collection('patients').add(patientData);
+            await db.collection('inquiries').doc(inquiryId).delete();
+            // Switch UI to patient list so therapist sees the newly added patient
+            if (typeof showSection === 'function') {
+                showSection('patientListSection');
+            }
+            // Populate and show custom success modal instead of alert
+            const detailsEl = document.getElementById('patientAddedDetails');
+            const modalEl = document.getElementById('patientAddedModal');
+            if (detailsEl && modalEl) {
+                detailsEl.innerHTML = `Patient ID: <strong>${patientId}</strong><br>Passcode: <strong>${passcode}</strong><br><small>Provide these credentials to the patient.</small>`;
+                modalEl.style.display = 'flex';
+            } else {
+                // Fallback if modal not found
+                alert(`Patient added!\nPatient ID: ${patientId}\nPasscode: ${passcode}\nProvide these credentials to the patient.`);
+            }
+            await loadPendingInquiries();
+            await loadPatients();
+            await updateRayGainAnalytics();
+        } catch (error) {
+            console.error('Error accepting inquiry:', error);
+            alert('Error adding patient. Please try again.');
+        }
+    };
+
+    // Delete Inquiry
+    window.deleteInquiry = async function(inquiryId) {
+        if (confirm('Delete this inquiry?')) {
+            try {
+                await db.collection('inquiries').doc(inquiryId).delete();
+                await loadPendingInquiries();
+                await updateRayGainAnalytics();
+            } catch (error) {
+                console.error('Error deleting inquiry:', error);
+            }
+        }
+    };
+
+    // Load Patient List
+    async function loadPatients() {
+        try {
+            const snapshot = await db.collection('patients').get();
+            const patientTableBody = document.getElementById('patientTableBody');
+            patientTableBody.innerHTML = '';
+            const patientsForExport = [];
+            snapshot.forEach(doc => {
+                const patient = doc.data();
+                patientsForExport.push({ id: doc.id, ...patient });
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${patient.patientId}</td>
+                    <td>${patient.firstName || 'N/A'}</td>
+                    <td>${patient.middleName || 'N/A'}</td>
+                    <td>${patient.lastName || 'N/A'}</td>
+                    <td>${patient.age || 'N/A'}</td>
+                    <td>${patient.caseHistory || 'N/A'}</td>
+                    <td style="text-align:center;">
+                        <button onclick="viewRecords('${doc.id}','${patient.patientId || ''}')">View Records</button>
+                    </td>
+                    <td style="text-align:center;">
+                        <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+                            <button onclick="editPatient('${doc.id}')">Edit</button>
+                            <button onclick="deletePatient('${doc.id}')">Delete</button>
+                        </div>
+                    </td>
+                `;
+                patientTableBody.appendChild(row);
+            });
+            window._patientsForExport = patientsForExport;
+            await updateRayGainAnalytics();
+        } catch (error) {
+            console.error('Error loading patients:', error);
+        }
+    }
+
+    // Edit/View/Delete buttons — ready for expansion
+    window.editPatient = function(patientDocId) {
+        window.location.href = `medical-records.html?patientId=${patientDocId}`;
+    };
+    // Show full record history in the dashboard modal (same columns as medical-records page)
+    window.viewRecords = async function(patientDocId, patientNumber) {
+        const viewRecordModal = document.getElementById('viewRecordModal');
+        const recordDetails = document.getElementById('recordDetails');
+        recordDetails.innerHTML = 'Loading...';
+        viewRecordModal.style.display = 'flex';
+
+        try {
+            // Get patient doc to show patient info
+            let patientSnap = await db.collection('patients').doc(patientDocId).get();
+            let pdata = patientSnap.exists ? patientSnap.data() : null;
+
+            // If patient doc not found and we have a patientNumber, try resolving by patientId
+            if ((!pdata || Object.keys(pdata).length === 0) && patientNumber) {
+                const ps = await db.collection('patients').where('patientId', '==', patientNumber).limit(1).get();
+                if (!ps.empty) {
+                    patientSnap = ps.docs[0];
+                    pdata = patientSnap.data();
+                    patientDocId = patientSnap.id;
+                }
+            }
+
+            const displayName = pdata ? [pdata.firstName, pdata.middleName, pdata.lastName].filter(Boolean).join(' ') : '';
+            const age = pdata ? pdata.age || '' : '';
+            const caseHistory = pdata ? pdata.caseHistory || '' : '';
+            const contact = pdata ? (pdata.contact || '') : '';
+            const emergencyName = pdata ? (pdata.emergencyContactName || pdata.emergencyContact || '') : '';
+            const emergencyNumber = pdata ? (pdata.emergencyContactNumber || '') : '';
+
+            // Query records: prefer patient number, otherwise patientDocId
+            // Use client-side sorting to avoid Firestore composite index requirements
+            let recordsDocs = [];
+            // primary lookups
+            if (patientNumber) {
+                const s = await db.collection('medicalRecords').where('patientId', '==', patientNumber).get();
+                recordsDocs = (s && s.docs) ? s.docs.slice() : [];
+            }
+            if ((!recordsDocs || recordsDocs.length === 0) && patientDocId) {
+                const s2 = await db.collection('medicalRecords').where('patientDocId', '==', patientDocId).get();
+                recordsDocs = (s2 && s2.docs) ? s2.docs.slice() : [];
+            }
+
+            // Fallbacks: some older records may have been stored under the other id field or patientName.
+            // Run additional queries and merge unique results by doc.id.
+            const extraDocs = [];
+            try {
+                if ((!recordsDocs || recordsDocs.length === 0) && patientDocId) {
+                    const s3 = await db.collection('medicalRecords').where('patientId', '==', patientDocId).get();
+                    if (s3 && s3.docs) extraDocs.push(...s3.docs);
+                }
+                if ((!recordsDocs || recordsDocs.length === 0) && patientNumber) {
+                    const s4 = await db.collection('medicalRecords').where('patientDocId', '==', patientNumber).get();
+                    if (s4 && s4.docs) extraDocs.push(...s4.docs);
+                }
+                if ((!recordsDocs || recordsDocs.length === 0) && displayName) {
+                    const s5 = await db.collection('medicalRecords').where('patientName', '==', displayName).get();
+                    if (s5 && s5.docs) extraDocs.push(...s5.docs);
+                }
+            } catch (e) {
+                console.warn('Fallback record queries may require indexes or failed:', e);
+            }
+            if (extraDocs.length > 0) {
+                // merge unique by id
+                const map = new Map();
+                recordsDocs.forEach(d => map.set(d.id, d));
+                extraDocs.forEach(d => { if (!map.has(d.id)) map.set(d.id, d); });
+                recordsDocs = Array.from(map.values());
+            }
+
+            console.log('viewRecords debug:', { patientNumber, patientDocId, found: recordsDocs.length });
+
+            // Build HTML - same columns as medical-records
+            let html = `<strong>Name:</strong> ${displayName}<br>`;
+            html += `<strong>Age:</strong> ${age}<br>`;
+            html += `<strong>Case History:</strong> ${caseHistory}<br>`;
+            html += `<strong>Contact:</strong> ${contact}<br>`;
+            if (emergencyName || emergencyNumber) {
+                html += `<strong>Emergency Contact:</strong> ${emergencyName}<br>`;
+                if (emergencyNumber) html += `<strong>Emergency Contact Number:</strong> ${emergencyNumber}<br>`;
+            }
+
+            if (recordsDocs && recordsDocs.length > 0) {
+                // sort newest first by date (assumes ISO or parseable date strings)
+                recordsDocs.sort((a,b) => new Date(b.data().date || 0) - new Date(a.data().date || 0));
+                html += `<hr><strong>Record History (Progress Notes only)</strong>`;
+                html += `<table style='width:100%;border-collapse:collapse;margin-top:0.5em;'>`;
+                html += `<thead><tr style='background:#0fa8a8;color:#fff;text-align:left;'>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Date</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Treatment Time</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Attend</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Diagnosis</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Pain</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Location</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Subjective</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Functional %</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Functional Notes</th>`;
+                html += `<th style='padding:8px;border:1px solid #ddd;'>Goal Status</th>`;
+                html += `</tr></thead><tbody>`;
+
+                recordsDocs.forEach(docRec => {
+                    const r = docRec.data();
+                    const diagnosisVal = r.diagnosis || caseHistory || '';
+                    let painVal = '';
+                    if (r.pain !== undefined && r.pain !== null) {
+                        const s = String(r.pain).trim();
+                        if (s.includes('/')) painVal = s;
+                        else if (/^\d+(?:\.\d+)?$/.test(s)) painVal = s + '/10';
+                        else painVal = s;
+                    }
+                    const subjectiveVal = r.subjectiveNotes || r.subjectiveData || '';
+                    const functionalVal = r.functionalImprovement ?? '';
+                    html += `<tr>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${r.date || ''}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${r.treatmentTime || ''}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${r.attendance ?? ''}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${diagnosisVal}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${painVal}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${r.location || ''}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${subjectiveVal}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${functionalVal}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${r.functionalNotes || ''}</td>`;
+                    html += `<td style='padding:8px;border:1px solid #ddd;'>${r.goalStatus || ''}</td>`;
+                    html += `</tr>`;
+                });
+
+                html += `</tbody></table>`;
+            } else {
+                html += `<hr><strong>Record History:</strong> No records found.<br>`;
+            }
+
+            recordDetails.innerHTML = html;
+        } catch (err) {
+            console.error('Error loading records for modal:', err);
+            document.getElementById('recordDetails').innerText = 'Error loading records.';
+        }
+    };
+
+document.getElementById('closeViewRecordModal').onclick = function() {
+    document.getElementById('viewRecordModal').style.display = 'none';
+    document.getElementById('recordDetails').innerHTML = '';
+};
+
+    window.deletePatient = async function(patientDocId) {
+        if (confirm('Delete this patient and all records?')) {
+            try {
+                await db.collection('patients').doc(patientDocId).delete();
+                await loadPatients();
+                await updateRayGainAnalytics();
+            } catch (error) {
+                console.error('Error deleting patient:', error);
+            }
+        }
+    };
+
+    // Consolidated initializer
+    async function init() {
+        console.log('init: starting');
+        // runtime sanity checks
+        function runtimeSanityCheck() {
+            try {
+                const results = {
+                    db: !!window.db,
+                    XLSX: typeof window.XLSX !== 'undefined',
+                    loadPendingInquiries: typeof loadPendingInquiries === 'function',
+                    loadPatients: typeof loadPatients === 'function',
+                    updateRayGainAnalytics: typeof updateRayGainAnalytics === 'function',
+                    renderCalendar: typeof renderCalendar === 'function'
+                };
+                console.log('sanity results', results);
+                const contentEl = document.getElementById('runtimeStatusContent');
+                if (contentEl) {
+                    const lines = [];
+                    for (const [k,v] of Object.entries(results)) {
+                        lines.push(`<div style="margin-bottom:4px;"><strong>${k}:</strong> ${v ? '<span style=\"color:green;\">OK</span>' : '<span style=\"color:crimson;\">MISSING</span>'}</div>`);
+                    }
+                    contentEl.innerHTML = lines.join('');
+                }
+                // If critical items missing, attempt a few retries for db/XLSX
+                const criticalMissing = [];
+                if (!results.db) criticalMissing.push('db');
+                if (!results.XLSX) criticalMissing.push('XLSX');
+                if (criticalMissing.length > 0) {
+                    let attempts = 0;
+                    const maxAttempts = 3;
+                    const retry = () => {
+                        attempts++;
+                        const nowDb = !!window.db;
+                        const nowXlsx = typeof window.XLSX !== 'undefined';
+                        const nowResults = { db: nowDb, XLSX: nowXlsx };
+                        if (contentEl) {
+                            let txt = `<div style=\"margin-bottom:6px;\"><em>Retry ${attempts}/${maxAttempts}...</em></div>`;
+                            txt += Object.keys(nowResults).map(k => `<div><strong>${k}:</strong> ${nowResults[k] ? '<span style=\\\"color:green;\\\">OK</span>' : '<span style=\\\"color:crimson;\\\">MISSING</span>'}</div>`).join('');
+                            contentEl.innerHTML = txt;
+                        }
+                        if ((nowDb && nowXlsx) || attempts >= maxAttempts) return;
+                        setTimeout(retry, 1000 * attempts);
+                    };
+                    setTimeout(retry, 1000);
+                }
+            } catch (e) {
+                console.warn('sanity check failed', e);
+            }
+        }
+        runtimeSanityCheck();
+        // calendar render first so UI is visible
+        try { renderCalendar(currentMonth); } catch (e) { console.warn('init: renderCalendar failed', e); }
+        // Load core data
+        try { await loadPendingInquiries(); } catch (e) { console.warn('init: loadPendingInquiries failed', e); }
+        try { await loadPatients(); } catch (e) { console.warn('init: loadPatients failed', e); }
+        try { await updateRayGainAnalytics(); } catch (e) { console.warn('init: updateRayGainAnalytics failed', e); }
+
+        // Setup single Open Report button
+        const openReportBtn = document.getElementById('openReportBtn');
+        const previewModal = document.getElementById('reportPreviewModal');
+        const previewContent = document.getElementById('reportPreviewContent');
+        const downloadFromPreviewBtn = document.getElementById('downloadExcelFromPreview');
+        const printPreviewBtn = document.getElementById('printPreviewBtn');
+        const closePreview = document.getElementById('closeReportPreviewModal');
+
+        async function buildReportData() {
+            // RANGE SELECTION AND DATE FILTERING
+            const rangeSelect = document.getElementById('reportRangeSelect');
+            const mode = rangeSelect ? rangeSelect.value : 'weekly';
+            const now = new Date();
+            let rangeStart = null; // inclusive start
+            let rangeEnd = now; // inclusive end
+            if (mode === 'weekly') {
+                rangeStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+            } else if (mode === 'monthly') {
+                rangeStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            } else if (mode === 'yearly') {
+                rangeStart = new Date(now.getFullYear(), 0, 1);
+            }
+            function parseMaybeDate(v){
+                if(!v) return null;
+                if(v instanceof Date) return v;
+                const s = String(v).trim();
+                if(!s) return null;
+                if(/^\d{4}-\d{2}-\d{2}$/.test(s)){
+                    const [Y,M,D] = s.split('-').map(Number);
+                    return new Date(Y, M-1, D);
+                }
+                const d = new Date(s);
+                return isNaN(d.getTime()) ? null : d;
+            }
+            function inRange(rec){
+                const fields = ['date','createdAt','updatedAt'];
+                let dt = null;
+                for(const f of fields){ if(rec && rec[f]){ dt = parseMaybeDate(rec[f]); if(dt) break; } }
+                if(!dt) return true; // if no date field, include by default
+                if(rangeStart && dt < rangeStart) return false;
+                if(rangeEnd && dt > rangeEnd) return false;
+                return true;
+            }
+            const [patientsSnap, medSnap, subjSnap, objSnap, apptSnap] = await Promise.all([
+                db.collection('patients').get(),
+                db.collection('medicalRecords').get(),
+                db.collection('subjectiveRecords').get(),
+                db.collection('objectiveRecords').get(),
+                db.collection('appointments').get()
+            ]);
+            const patients = patientsSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+            const medicalRecords = medSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+            const subjectiveRecords = subjSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+            const objectiveRecords = objSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+            const appointments = apptSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+
+            const patientsByDoc = new Map();
+            const patientsByNumber = new Map();
+            patients.forEach(p => {
+                patientsByDoc.set(p._id, p);
+                if (p.patientId) patientsByNumber.set(String(p.patientId), p);
+            });
+
+            function enrichRecord(rec) {
+                const out = Object.assign({}, rec);
+                let p = null;
+                if (rec.patientDocId && patientsByDoc.has(rec.patientDocId)) p = patientsByDoc.get(rec.patientDocId);
+                else if (rec.patientId && patientsByNumber.has(String(rec.patientId))) p = patientsByNumber.get(String(rec.patientId));
+                else if (rec.patientName) {
+                    const name = String(rec.patientName).trim();
+                    p = patients.find(x => ([x.firstName, x.middleName, x.lastName].filter(Boolean).join(' ').trim() === name));
+                }
+                if (p) {
+                    out._patient_doc = p._id;
+                    out.patient_number = p.patientId || '';
+                    out.patient_name = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(' ');
+                    out.patient_contact = p.contact || p.contactNumber || '';
+                    out.caseHistory = p.caseHistory || out.caseHistory || '';
+                }
+                return out;
+            }
+
+            const medEnriched = medicalRecords.filter(inRange).map(enrichRecord);
+            const subjEnriched = subjectiveRecords.filter(inRange).map(enrichRecord);
+            const objEnriched = objectiveRecords.filter(inRange).map(enrichRecord);
+            const apptEnriched = appointments.filter(inRange).map(a => {
+                const out = Object.assign({}, a);
+                if (a.patientDocId && patientsByDoc.has(a.patientDocId)) {
+                    const p = patientsByDoc.get(a.patientDocId);
+                    out.patient_number = p.patientId || '';
+                } else if (a.patientId && patientsByNumber.has(String(a.patientId))) {
+                    const p = patientsByNumber.get(String(a.patientId));
+                    out._patient_doc = p._id;
+                    out.patient_name = [p.firstName, p.middleName, p.lastName].filter(Boolean).join(' ');
+                }
+                return out;
+            });
+
+                    // Helper to convert keys to human-friendly labels
+                    function prettyKey(k) {
+                        return String(k)
+                            .replace(/([A-Z])/g, ' $1')
+                            .replace(/[_\-]+/g, ' ')
+                            .replace(/\s+/g, ' ')
+                            .trim()
+                            .replace(/\b\w/g, c => c.toUpperCase());
+                    }
+
+                    // Remove internal id-like keys and produce readable rows
+                    function sanitizeRecords(arr) {
+                        if (!Array.isArray(arr)) return [];
+                        return arr.map(r => {
+                            const out = {};
+                            // Prefer already enriched patient fields
+                            if (r.patient_name) out['Patient Name'] = r.patient_name;
+                            // Skip patient numbers/ids to avoid exporting identifiers
+                            // Copy remaining fields except internal ids
+                            Object.keys(r).forEach(k => {
+                                if (/^_?id$|_id$|^_/i.test(k)) return; // skip raw ids like _id
+                                if (/patientDocId|patientId|_patient_doc/i.test(k)) return; // skip technical ids (also skip numeric patient ids)
+                                if (k === 'patient_name' || k === 'patient_number') return; // already handled
+                                const label = prettyKey(k);
+                                out[label] = r[k] === undefined || r[k] === null ? '' : r[k];
+                            });
+                            return out;
+                        });
+                    }
+
+                    // Prepare a human-friendly patients sheet
+                    const patientsExport = patients.map(p => ({
+                        'Patient Name': [p.firstName, p.middleName, p.lastName].filter(Boolean).join(' '),
+                        'Age': p.age || '',
+                        'Contact': p.contact || p.contactNumber || '',
+                        'Case History': p.caseHistory || '',
+                        'Emergency Contact Name': p.emergencyContactName || p.emergencyContact || '',
+                        'Emergency Contact Number': p.emergencyContactNumber || ''
+                    }));
+
+                    return {
+                        patients: patientsExport,
+                        medicalRecords: sanitizeRecords(medEnriched),
+                        subjectiveRecords: sanitizeRecords(subjEnriched),
+                        objectiveRecords: sanitizeRecords(objEnriched),
+                        appointments: sanitizeRecords(apptEnriched)
+                    };
+        }
+
+        // Preferred column order for sheets (used by both preview and XLSX/CSV export)
+        const preferredOrders = {
+            medicalRecords: ['Date','Patient Name','Treatment Time','Attendance','Diagnosis','Pain','Location','Subjective','Functional %','Functional Notes','Goal Status'],
+            subjectiveRecords: ['Date','Patient Name','Subjective','Notes'],
+            objectiveRecords: ['Date','Patient Name','Objective','Notes'],
+            appointments: ['Date','Patient Name','Session Type','Description']
+        };
+
+        // Strict orders (if you want exact column ordering in exports)
+        const strictOrders = {
+            patients: ['Patient Name','Age','Contact','Case History','Emergency Contact Name','Emergency Contact Number'],
+            medicalRecords: ['Date','Patient Name','Treatment Time','Attendance','Diagnosis','Pain','Location','Subjective','Functional %','Functional Notes','Goal Status'],
+            subjectiveRecords: ['Date','Patient Name','Subjective','Notes'],
+            objectiveRecords: ['Date','Patient Name','Objective','Notes'],
+            appointments: ['Date','Patient Name','Session Type','Description']
+        };
+
+        // Column widths (wch) per sheet for XLSX (approx characters)
+        const columnWidths = {
+            patients: { 'Patient Name':30,'Age':6,'Contact':18,'Case History':30,'Emergency Contact Name':24,'Emergency Contact Number':16 },
+            medicalRecords: { 'Date':16,'Patient Name':26,'Treatment Time':12,'Attendance':10,'Diagnosis':28,'Pain':8,'Location':16,'Subjective':36,'Functional %':10,'Functional Notes':30,'Goal Status':14 },
+            subjectiveRecords: { 'Date':16,'Patient Name':26,'Subjective':40,'Notes':30 },
+            objectiveRecords: { 'Date':16,'Patient Name':26,'Objective':40,'Notes':30 },
+            appointments: { 'Date':16,'Patient Name':26,'Session Type':12,'Description':40 }
+        };
+
+        // Friendly / child-friendly labels mapping (original -> simple)
+        const friendlyLabels = {
+            'Patient Name':'Name',
+            'Age':'Age',
+            'Contact':'Phone',
+            'Case History':'Problem',
+            'Emergency Contact Name':'Emergency Contact',
+            'Emergency Contact Number':'Contact Number',
+            'Date':'Date',
+            'Treatment Time':'Duration',
+            'Attendance':'Attended',
+            'Diagnosis':'Diagnosis',
+            'Pain':'Pain level',
+            'Location':'Body part',
+            'Subjective':'Notes',
+            'Functional %':'How Much Better (%)',
+            'Functional Notes':'Progress Notes',
+            'Goal Status':'Goal Status',
+            'Session Type':'Session Type',
+            'Description':'Notes',
+            'Objective':'Observations',
+            'Notes':'Notes'
+        };
+
+        // Default percentage widths per sheet (applied to preview table headers)
+        // Keys are sheet names and inner keys are the original header names used in strictOrders
+        const defaultPercentages = {
+            patients: {
+                'Patient Name': 30,'Age':6,'Contact':18,'Case History':30,'Emergency Contact Name':10,'Emergency Contact Number':6
+            },
+            medicalRecords: {
+                'Date':10,'Patient Name':20,'Treatment Time':6,'Attendance':5,'Diagnosis':20,'Pain':5,'Location':8,'Subjective':12,'Functional %':4,'Functional Notes':6,'Goal Status':4
+            },
+            subjectiveRecords: {
+                'Date':15,'Patient Name':25,'Subjective':40,'Notes':20
+            },
+            objectiveRecords: {
+                'Date':15,'Patient Name':25,'Objective':40,'Notes':20
+            },
+            appointments: {
+                'Date':18,'Patient Name':30,'Session Type':12,'Description':40
+            }
+        };
+
+        function renderPreviewHtml(report) {
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function prettyTitle(name) {
+                let s = String(name || '');
+                // insert spaces before capital letters (camelCase -> words)
+                s = s.replace(/([a-z])([A-Z])/g, '$1 $2');
+                // replace underscores/hyphens with spaces
+                s = s.replace(/[_\-]+/g, ' ');
+                s = s.replace(/\s+/g, ' ').trim();
+                if (!s) return '';
+                // Title Case each word
+                return s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            }
+            
+
+            const parts = [];
+            for (const [name, arr] of Object.entries(report)) {
+                // Wrap each sheet in a report-page so it acts like a scrollable page
+                let pageHtml = '<div class="report-page">';
+                pageHtml += '<h3 style="margin-top:0.25rem;margin-bottom:0.5rem;">' + escapeHtml(prettyTitle(name)) + '</h3>';
+                // Ensure array exists
+                const rows = Array.isArray(arr) ? arr : [];
+                if (rows.length === 0) {
+                    pageHtml += '<div><em>No records</em></div></div>';
+                    parts.push(pageHtml);
+                    continue;
+                }
+
+                // Determine header order: prefer strictOrders (exact), otherwise preferredOrders
+                const keysSet = rows.reduce((s, r) => { Object.keys(r).forEach(k => s.add(k)); return s; }, new Set());
+                const allKeys = Array.from(keysSet);
+                let orderedOriginalKeys;
+                if (strictOrders && strictOrders[name]) {
+                    orderedOriginalKeys = strictOrders[name].slice();
+                } else {
+                    const order = preferredOrders[name] || [];
+                    orderedOriginalKeys = [...order.filter(k => allKeys.includes(k)), ...allKeys.filter(k => !order.includes(k))];
+                }
+
+                // Build table inside page container; display friendly labels for children
+                pageHtml += '<div style="overflow:auto;max-width:100%;">';
+                pageHtml += '<table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:1.05rem;">';
+                // Header row: show friendly labels
+                // determine percent widths mapping for this sheet (normalize to sum=100)
+                const percentMapRaw = (defaultPercentages && defaultPercentages[name]) || {};
+                const specifiedKeys = Object.keys(percentMapRaw);
+                let totalSpecified = specifiedKeys.reduce((s,k) => s + (Number(percentMapRaw[k]) || 0), 0);
+                const percentMap = {};
+                if (totalSpecified <= 0) {
+                    // no specified widths; leave percentMap empty and distribute evenly later
+                } else if (totalSpecified >= 100) {
+                    // scale down specified keys proportionally to sum to 100
+                    specifiedKeys.forEach(k => { percentMap[k] = Math.max(0, Math.round((Number(percentMapRaw[k]) || 0) * 100 / totalSpecified)); });
+                    // adjust rounding to ensure sum==100
+                    let ssum = specifiedKeys.reduce((s,k) => s + (percentMap[k] || 0), 0);
+                    let adjust = 100 - ssum;
+                    let i = 0;
+                    while (adjust !== 0 && specifiedKeys.length > 0) {
+                        const key = specifiedKeys[i % specifiedKeys.length];
+                        percentMap[key] = Math.max(0, (percentMap[key] || 0) + (adjust > 0 ? 1 : -1));
+                        adjust = 100 - specifiedKeys.reduce((s,k) => s + (percentMap[k] || 0), 0);
+                        i++;
+                        if (i > 1000) break;
+                    }
+                } else {
+                    // totalSpecified < 100: distribute remainder evenly across missing keys
+                    const missingKeys = orderedOriginalKeys.filter(k => !percentMapRaw.hasOwnProperty(k));
+                    const remainder = 100 - totalSpecified;
+                    const perMissing = missingKeys.length > 0 ? Math.floor(remainder / missingKeys.length) : 0;
+                    // assign specified
+                    specifiedKeys.forEach(k => { percentMap[k] = Math.max(0, Math.round(Number(percentMapRaw[k]) || 0)); });
+                    // assign missing
+                    missingKeys.forEach((k, idx) => {
+                        percentMap[k] = perMissing + (idx < (remainder - perMissing * missingKeys.length) ? 1 : 0);
+                    });
+                }
+
+                pageHtml += '<thead><tr>' + orderedOriginalKeys.map(orig => {
+                    const disp = friendlyLabels[orig] || orig;
+                    const pct = percentMap.hasOwnProperty(orig) ? percentMap[orig] : Math.max(1, Math.floor(100 / orderedOriginalKeys.length));
+                    const widthStyle = 'width:' + pct + '%;';
+                    return '<th style="position:sticky;top:0;padding:12px 10px;border-bottom:2px solid #e6e6e6;background:#2ecac8;text-align:left;color:#ffffff;min-width:80px;' + widthStyle + '">' + escapeHtml(disp) + '</th>'
+                }).join('') + '</tr></thead>';
+                pageHtml += '<tbody>';
+
+                rows.forEach((row, ri) => {
+                    const zebra = ri % 2 === 0 ? 'background:#ffffff;' : 'background:#fbfdfe;';
+                    pageHtml += '<tr style="' + zebra + '">';
+                    orderedOriginalKeys.forEach(orig => {
+                        let raw = row[orig];
+                        if (raw === undefined || raw === null || raw === '') raw = 'Not provided';
+                        // If it's an object or array, stringify safely
+                        if (typeof raw === 'object') raw = JSON.stringify(raw);
+                        const cell = escapeHtml(raw);
+                        pageHtml += '<td style="padding:10px;border-bottom:1px solid #eee;vertical-align:top;word-break:break-word;max-width:420px;">' + cell + '</td>';
+                    });
+                    pageHtml += '</tr>';
+                });
+
+                pageHtml += '</tbody></table></div></div>';
+                parts.push(pageHtml);
+            }
+            return parts.join('');
+        }
+
+        function rangeLabel(mode){
+            const now = new Date();
+            if(mode==='weekly') return 'Last 7 Days';
+            if(mode==='monthly') return now.toLocaleString('default',{month:'long',year:'numeric'});
+            if(mode==='yearly') return String(now.getFullYear());
+            return 'All';
+        }
+        // Build a compact summary box using the already-filtered report data
+        function buildSummaryHtml(report, dateRangeLabel){
+            const med = Array.isArray(report.medicalRecords) ? report.medicalRecords : [];
+            const subj = Array.isArray(report.subjectiveRecords) ? report.subjectiveRecords : [];
+            const obj  = Array.isArray(report.objectiveRecords) ? report.objectiveRecords : [];
+            const appt = Array.isArray(report.appointments) ? report.appointments : [];
+            const totalAppt = appt.length;
+            const homeAppt = appt.filter(a => String(a['Session Type']||'').toLowerCase()==='home').length;
+            const clinicAppt = appt.filter(a => String(a['Session Type']||'').toLowerCase()==='clinic').length;
+            const names = new Set();
+            [med,subj,obj,appt].forEach(arr => arr.forEach(r => { if(r['Patient Name']) names.add(String(r['Patient Name']).trim()); }));
+            const uniquePatients = names.size;
+            return (
+                '<div style="border:1px solid #d0d7da;border-radius:8px;overflow:hidden;margin:8px 0 14px;">'+
+                '<table style="table-layout:fixed;width:100%;border-collapse:collapse;">'+
+                '<thead><tr><th style="width:70%;background:#2ecac8;color:#fff;padding:8px;text-align:left;">Summary ('+ (dateRangeLabel||'') +')</th>'+
+                '<th style="width:30%;background:#2ecac8;color:#fff;padding:8px;text-align:center;">Value</th></tr></thead><tbody>'+
+                '<tr><td>Unique Patients Involved</td><td style="text-align:center">'+uniquePatients+'</td></tr>'+
+                '<tr><td>Medical Records</td><td style="text-align:center">'+med.length+'</td></tr>'+
+                '<tr><td>Subjective Records</td><td style="text-align:center">'+subj.length+'</td></tr>'+
+                '<tr><td>Objective Records</td><td style="text-align:center">'+obj.length+'</td></tr>'+
+                '<tr><td>Appointments (Total)</td><td style="text-align:center">'+totalAppt+'</td></tr>'+
+                '<tr><td>Appointments — Home</td><td style="text-align:center">'+homeAppt+'</td></tr>'+
+                '<tr><td>Appointments — Clinic</td><td style="text-align:center">'+clinicAppt+'</td></tr>'+
+                '</tbody></table></div>'
+            );
+        }
+        async function generateAndShowPreview(downloadExcel, externalTab, forPdf) {
+            previewContent.innerHTML = 'Preparing report...';
+            if (!externalTab) previewModal.style.display = 'flex';
+            try {
+                const report = await buildReportData();
+                const mode = (document.getElementById('reportRangeSelect')||{value:'weekly'}).value;
+                const generatedAtLabel = new Date().toLocaleString();
+                const dateRangeLabel = rangeLabel(mode);
+                let wb;
+                let csvCombined = '';
+                if (typeof XLSX !== 'undefined') {
+                    wb = XLSX.utils.book_new();
+                    for (const [name, arr] of Object.entries(report)) {
+                        const rows = Array.isArray(arr) ? arr : [];
+                        const keysSet = rows.reduce((s, r) => { Object.keys(r).forEach(k => s.add(k)); return s; }, new Set());
+                        const allKeys = Array.from(keysSet);
+                        // Determine original ordered keys
+                        let orderedOriginalKeys;
+                        if (strictOrders && strictOrders[name]) {
+                            orderedOriginalKeys = strictOrders[name].slice();
+                        } else {
+                            const order = preferredOrders[name] || [];
+                            orderedOriginalKeys = [...order.filter(k => allKeys.includes(k)), ...allKeys.filter(k => !order.includes(k))];
+                        }
+                        // Build a display-mapped array where keys are friendly labels and missing values become 'Not provided'
+                        const orderedDisplayKeys = orderedOriginalKeys.map(k => friendlyLabels[k] || k);
+                        const arrDisplay = rows.map(r => {
+                            const obj = {};
+                            orderedOriginalKeys.forEach(orig => {
+                                let v = r[orig];
+                                if (v === undefined || v === null || v === '') v = 'Not provided';
+                                if (typeof v === 'object') v = JSON.stringify(v);
+                                const dkey = friendlyLabels[orig] || orig;
+                                obj[dkey] = v;
+                            });
+                            return obj;
+                        });
+                        const ws = XLSX.utils.json_to_sheet(arrDisplay, { header: orderedDisplayKeys });
+                        // column widths: use original columnWidths mapping where possible
+                        const widthsMapOrig = (columnWidths && columnWidths[name]) || {};
+                        ws['!cols'] = orderedOriginalKeys.map(orig => ({ wch: widthsMapOrig[orig] || Math.min(40, Math.max(10, Math.ceil(String(orig).length * 1.6))) }));
+                        XLSX.utils.book_append_sheet(wb, ws, name.slice(0,31));
+                        // append CSV part for this sheet
+                        try {
+                            const csvPart = XLSX.utils.sheet_to_csv(ws);
+                            csvCombined += `Sheet: ${name}\n` + csvPart + '\n';
+                        } catch (e) {
+                            console.warn('Could not convert sheet to CSV for', name, e);
+                        }
+                    }
+                }
+                if (externalTab) {
+                    let downloadUrl = '';
+                    let csvUrl = '';
+                    if (wb) {
+                        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                        const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                        downloadUrl = URL.createObjectURL(blob);
+                    }
+                    if (csvCombined) {
+                        const csvBlob = new Blob([csvCombined], { type: 'text/csv' });
+                        csvUrl = URL.createObjectURL(csvBlob);
+                    }
+                    const html = `<!doctype html><html><head><meta charset="utf-8"><title>RayGain Physiotherapy Clinic Report</title>`+
+                    `<style>:root{--brand:#2ecac8;--ink:#0f172a;--ink-strong:#0b1220;--border:#d9dfe3;--muted:#5d6672;--bg:#ffffff;}*{box-sizing:border-box;}html,body{background:var(--bg);}body{font-family:Segoe UI,Arial,Helvetica,sans-serif;margin:0;padding:16px;color:var(--ink);-webkit-font-smoothing:antialiased;print-color-adjust:exact;-webkit-print-color-adjust:exact;} .header-block{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;margin:0 0 10px;text-align:left;} .header-block h1{font-size:30px;line-height:1.15;margin:2px 0 2px;color:var(--ink-strong);font-weight:800;letter-spacing:.35px;} .header-block h1::after{content:'';display:block;width:280px;height:4px;background:linear-gradient(90deg,var(--brand),#24a3a1);margin:8px 0 0;border-radius:3px;} .meta-info{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 4px;font-size:12px;} .meta-info .chip{background:#e8f6f6;border:1px solid var(--brand);color:var(--ink-strong);padding:4px 10px;border-radius:18px;font-weight:600;letter-spacing:.4px;} .meta-info .stamp{color:var(--muted);font-weight:500;letter-spacing:.3px;} .controls{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 12px;} .controls a,.controls button{border:1px solid #c3ccd1;background:#f1f7f9;color:var(--ink);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.05);} .controls a:hover,.controls button:hover{background:#e6f1f4;} .report-body{display:block;max-width:100%;} .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:4px 0 14px;} .kpi .card{border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:#fff;box-shadow:0 1px 4px rgba(18,38,58,.06);} .kpi .card h3{font-size:11px;color:var(--muted);margin:0 0 4px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;} .kpi .card .num{font-size:19px;color:var(--ink-strong);font-weight:800;line-height:1;} table{width:100%;table-layout:fixed;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 5px rgba(18,38,58,.06);margin:0 0 14px;} thead th{background:var(--brand);color:#fff;font-weight:700;text-align:left;padding:8px 9px;font-size:13px;letter-spacing:.2px;border-right:1px solid rgba(255,255,255,.3);} thead th:last-child{border-right:none;} tbody td{border-top:1px solid var(--border);border-right:1px solid var(--border);font-size:12px;color:#0f1e29;padding:5px 8px;line-height:1.25;vertical-align:top;word-break:break-word;} tbody td:last-child{border-right:none;} tbody tr:nth-child(even){background:#f9fcfc;} tbody tr:hover{background:#eef8f8;} caption{caption-side:top;text-align:left;padding:5px 8px;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.3px;background:#ffffff;} @media print{ @page{size:A4;margin:10mm;} html,body{width:210mm;height:297mm;background:#fff;} .controls{display:none !important;} body{padding:6mm;} table{page-break-inside:auto;} thead{display:table-header-group;} tfoot{display:table-footer-group;} }</style>`+
+                    `<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>`+
+                    `<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>`+
+                    `</head><body>`+
+                    `<div class="controls">`+
+                    (downloadUrl ? `<a id="dl" href="${downloadUrl}" download="raygain_report.xlsx">Download Excel</a>`:'')+
+                    (csvUrl ? `<a id="dlcsv" href="${csvUrl}" download="raygain_report.csv">Download CSV</a>`:'')+
+                    `<button id="downloadPdfBtn">Download PDF</button>`+
+                    `</div><div id="printWrapper">`+
+                    `<div class="header-block"><h1>RayGain Physiotherapy Clinic Report</h1><div class="meta-info"><span class="chip">Range: ${dateRangeLabel||''}</span><span class="stamp">Generated: ${generatedAtLabel}</span></div></div>`+
+                    `<div class="report-body">`+
+                    `<div id="summary">${buildSummaryHtml(report, dateRangeLabel)}</div>`+
+                    `<div id="content">${renderPreviewHtml(report)}</div>`+
+                    `</div></div>`+
+                                        `<script>(function(){var pdfBtn=document.getElementById('downloadPdfBtn');if(pdfBtn){pdfBtn.onclick=async function(){try{var wrap=document.getElementById('printWrapper');if(!wrap){alert('Nothing to export');return;}if(!window.html2canvas||!window.jspdf){alert('PDF libraries not loaded');return;}if(document.fonts && document.fonts.ready){try{await document.fonts.ready;}catch(_){} }await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));const canvas=await html2canvas(wrap,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#ffffff'});const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});const pageW=pdf.internal.pageSize.getWidth();const pageH=pdf.internal.pageSize.getHeight();const margin=10;const availW=pageW - margin*2;const availH=pageH - margin*2;let targetW=availW;let targetH=canvas.height * targetW / canvas.width;if(targetH>availH){targetH=availH;targetW=canvas.width * targetH / canvas.height;}const offsetX=margin + (availW - targetW)/2;const offsetY=margin;pdf.addImage(canvas,'PNG',offsetX,offsetY,targetW,targetH,'','FAST');pdf.save('raygain_report.pdf');}catch(e){console.error(e);alert('Failed to build PDF');}};} })();<\/script>`+
+                    `</body></html>`;
+                    externalTab.document.open();
+                    externalTab.document.write(html);
+                    externalTab.document.close();
+                    return;
+                }
+                if (wb) {
+                    downloadFromPreviewBtn.onclick = function() { XLSX.writeFile(wb, 'raygain_report.xlsx'); };
+                }
+                // Wire CSV download button (modal)
+                const downloadCsvBtn = document.getElementById('downloadCsvFromPreview');
+                if (downloadCsvBtn) {
+                    downloadCsvBtn.onclick = function() {
+                        if (!csvCombined) { alert('No CSV data available.'); return; }
+                        const blob = new Blob([csvCombined], { type: 'text/csv' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'raygain_report.csv';
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        URL.revokeObjectURL(url);
+                    };
+                }
+                previewContent.innerHTML = buildSummaryHtml(report, dateRangeLabel) + renderPreviewHtml(report);
+            } catch (err) {
+                console.error('Error building report:', err);
+                if (!externalTab) previewContent.innerHTML = '<div style="color:#900">Error preparing report.</div>';
+                else externalTab.document.body.innerHTML = '<div style="color:#900">Error preparing report.</div>';
+            }
+        }
+
+        if (openReportBtn) {
+            openReportBtn.onclick = async function(){
+                const newTab = window.open('', '_blank');
+                if(!newTab){ alert('Popup blocked. Allow popups to view report.'); return; }
+                await generateAndShowPreview(true, newTab, false);
+            };
+        }
+        // Range label update
+        const rangeSelectEl = document.getElementById('reportRangeSelect');
+        const rangeLabelEl = document.getElementById('reportRangeLabel');
+        if(rangeSelectEl && rangeLabelEl){
+            rangeSelectEl.onchange = function(){
+                const v = rangeSelectEl.value;
+                const map = { weekly:'Last 7 Days', monthly:new Date().toLocaleString('default',{month:'long',year:'numeric'}), yearly:String(new Date().getFullYear()) };
+                rangeLabelEl.textContent = map[v] || 'All';
+            };
+        }
+        if (closePreview) closePreview.onclick = () => { previewModal.style.display = 'none'; };
+        if (printPreviewBtn) printPreviewBtn.onclick = () => { window.print(); };
+        const printPreviewLandscapeBtnEl = document.getElementById('printPreviewLandscapeBtn');
+        if (printPreviewLandscapeBtnEl) {
+            printPreviewLandscapeBtnEl.onclick = function() {
+                const s = document.createElement('style');
+                s.id = 'print-landscape-style';
+                s.textContent = '@page { size: A4 landscape; margin: 18mm; }';
+                document.head.appendChild(s);
+                window.print();
+                setTimeout(function(){ const el = document.getElementById('print-landscape-style'); if (el) el.parentNode.removeChild(el); }, 1000);
+            };
+        }
+    }
+
+    window.addEventListener('load', init);
+    </script>
+
+    <script>
+
+    // CALENDAR CODE - UI always visible!
+    const calendarEl = document.getElementById('calendar');
+    const monthLabelEl = document.getElementById('monthLabel');
+    const prevBtn = document.getElementById('prevMonth');
+    const nextBtn = document.getElementById('nextMonth');
+    const addBtn = document.getElementById('addScheduleBtn');
+    const modalEl = document.getElementById('scheduleModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const formEl = document.getElementById('scheduleForm');
+    const dateInput = document.getElementById('date');
+    const floatingCard = document.getElementById('floatingCard');
+    const fcClose = document.getElementById('fcClose');
+    const fcDelete = document.getElementById('fcDelete');
+    const fcName = document.getElementById('fcName');
+    const fcType = document.getElementById('fcType');
+    const fcDate = document.getElementById('fcDate');
+    const fcDesc = document.getElementById('fcDesc');
+    let currentMonth = new Date();
+    let schedules = [];
+    let activeScheduleId = null;
+    async function loadSchedules() {
+        const snapshot = await db.collection("appointments").get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+    async function saveSchedule(schedule) {
+        await db.collection("appointments").add(schedule);
+    }
+    async function deleteSchedule(id) {
+        await db.collection("appointments").doc(id).delete();
+    }
+    async function renderCalendar(date) {
+        schedules = await loadSchedules();
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        monthLabelEl.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+        calendarEl.innerHTML = '';
+        let weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        weekdays.forEach(d => {
+            let wd = document.createElement('div');
+            wd.className = 'weekday';
+            wd.textContent = d;
+            calendarEl.appendChild(wd);
+        });
+        let firstDay = new Date(year, month, 1).getDay();
+        let daysInMonth = new Date(year, month+1, 0).getDate();
+        for (let i=0; i<firstDay; i++) calendarEl.appendChild(document.createElement('div'));
+        for (let d=1; d<=daysInMonth; d++) {
+            let cell = document.createElement('div');
+            cell.className = 'day';
+            // avoid template-literals here to satisfy editor parser
+            let thisDate = year + '-' + String(month+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            if (new Date(thisDate).toDateString() === new Date().toDateString())
+                cell.classList.add('day-today');
+            cell.innerHTML = '<div>' + d + '</div>';
+                        schedules.filter(s => s.date === thisDate).forEach(s => {
+                                let badge = document.createElement('span');
+                                badge.className = 'schedule-badge';
+                                if (s.sessionType === 'Home') {
+                                    badge.classList.add('session-type-home');
+                                } else if (s.sessionType === 'Clinic') {
+                                    badge.classList.add('session-type-clinic');
+                                }
+                                badge.textContent = s.patientName;
+                                badge.title = (s.sessionType || '') + ' - ' + (s.description || '');
+                                badge.onclick = function(){ showFloatingCard(s); };
+                                cell.appendChild(badge);
+                        });
+            calendarEl.appendChild(cell);
+        }
+    }
+    prevBtn.onclick = () => { currentMonth.setMonth(currentMonth.getMonth()-1); renderCalendar(currentMonth); };
+    nextBtn.onclick = () => { currentMonth.setMonth(currentMonth.getMonth()+1); renderCalendar(currentMonth); };
+    addBtn.onclick = () => { modalEl.classList.remove('hidden'); formEl.reset(); dateInput.value = ''; };
+    closeModalBtn.onclick = () => { modalEl.classList.add('hidden'); };
+    // Populate patient select when opening modal
+    async function populatePatientSelect(){
+        const sel = document.getElementById('patientSelect');
+        if(!sel) return;
+        sel.innerHTML = '<option value="" disabled selected>Select Patient</option>';
+        try {
+            const snap = await db.collection('patients').get();
+            snap.forEach(doc => {
+                const p = doc.data();
+                const fullName = [p.firstName,p.middleName,p.lastName].filter(Boolean).join(' ').trim();
+                const opt = document.createElement('option');
+                opt.value = p.patientId || ''; // patient number
+                opt.textContent = fullName + (p.patientId ? ' ('+p.patientId+')' : '');
+                opt.dataset.docId = doc.id;
+                opt.dataset.name = fullName;
+                sel.appendChild(opt);
+            });
+        } catch(err){ console.warn('populatePatientSelect error', err); }
+    }
+    addBtn.onclick = () => { modalEl.classList.remove('hidden'); formEl.reset(); dateInput.value = ''; populatePatientSelect(); };
+    formEl.onsubmit = async function(e) {
+        e.preventDefault();
+        const sel = document.getElementById('patientSelect');
+        const selected = sel.options[sel.selectedIndex];
+        let data = {
+            patientName: selected ? (selected.dataset.name || selected.textContent) : '',
+            patientId: selected ? selected.value : '',
+            patientDocId: selected ? selected.dataset.docId : '',
+            description: document.getElementById('description').value,
+            date: document.getElementById('date').value,
+            sessionType: document.querySelector('input[name="sessionType"]:checked').value,
+            createdAt: new Date().toISOString()
+        };
+        await saveSchedule(data);
+        modalEl.classList.add('hidden');
+        renderCalendar(currentMonth);
+    };
+    function showFloatingCard(sch) {
+        floatingCard.classList.remove('hidden');
+        fcName.textContent = sch.patientName;
+        fcType.textContent = sch.sessionType;
+        fcDate.textContent = sch.date;
+        fcDesc.textContent = sch.description;
+        activeScheduleId = sch.id;
+    }
+    fcClose.onclick = () => { floatingCard.classList.add('hidden'); activeScheduleId = null; };
+    fcDelete.onclick = async () => {
+        if (!activeScheduleId) return;
+        await deleteSchedule(activeScheduleId);
+        floatingCard.classList.add('hidden');
+        renderCalendar(currentMonth);
+    };
+
+    // removed duplicate load listener; all initialization now in init()
+
+
+// RayGain Data Analytics: Updates analytics widgets and chart
+async function updateRayGainAnalytics() {
+    // Total Patients
+    const patientsSnapshot = await db.collection('patients').get();
+    const totalPatients = patientsSnapshot.size;
+    document.getElementById('totalPatientsCount').textContent = totalPatients;
+
+    // Pending Patients
+    const inquiriesSnapshot = await db.collection('inquiries').get();
+    const pendingPatients = inquiriesSnapshot.size;
+    document.getElementById('pendingPatientsCount').textContent = pendingPatients;
+
+    // Appointments Count (All)
+    const appointmentsSnapshot = await db.collection('appointments').get();
+    const appointmentsCount = appointmentsSnapshot.size;
+    document.getElementById('appointmentsCount').textContent = appointmentsCount;
+
+    // Common Cases Chart
+    const caseCounts = {};
+    patientsSnapshot.forEach(doc => {
+        const caseHistory = doc.data().caseHistory || 'Other';
+        caseCounts[caseHistory] = (caseCounts[caseHistory] || 0) + 1;
+    });
+    const ctx = document.getElementById('commonCasesChart').getContext('2d');
+    if (window._commonCasesChart) window._commonCasesChart.destroy();
+    window._commonCasesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(caseCounts),
+            datasets: [{
+                label: 'Cases',
+                data: Object.values(caseCounts),
+                backgroundColor: '#4e73df',
+            }]
+        },
+        options: {
+            responsive: false,
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+</script>
+</div>
+<!-- Success Modal for Added Patient -->
+<div id="patientAddedModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:10001;">
+    <div style="background:#fff; padding:1.5rem 2rem; border-radius:10px; min-width:300px; max-width:420px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.18);">
+        <h3 style="margin-top:0; color:#14384b;">Patient Added</h3>
+        <p id="patientAddedDetails" style="line-height:1.4; margin:0 0 1rem; font-size:0.95rem;"></p>
+        <button id="patientAddedYesBtn" class="btn primary" style="min-width:120px;">Yes</button>
+    </div>
+</div>
+<script>
+// Handler for closing patient added modal
+(function(){
+    const yesBtn = document.getElementById('patientAddedYesBtn');
+    const modal = document.getElementById('patientAddedModal');
+    if (yesBtn && modal) {
+        yesBtn.addEventListener('click', function(){ modal.style.display = 'none'; });
+    }
+})();
+</script>
+</body>
+</html>

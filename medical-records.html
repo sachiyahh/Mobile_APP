@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Records | RayGain Physio Clinic</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container" style="position:relative;">
+    <button id="closeMedicalRecords" title="Back to Patient List" style="position:absolute;top:12px;right:14px;background:#fff;border:1px solid #d0d7da;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;line-height:32px;padding:0;color:#333;">✖</button>
+    <h1>Medical Records</h1>
+    <!-- TAB NAVIGATION -->
+    <div style="margin-bottom:18px;">
+      <button class="tabBtn active" data-tab="progressForm" id="progressTabBtn">Daily Progress</button>
+      <button class="tabBtn" data-tab="subjectiveForm" id="subjectiveTabBtn">Subjective Data</button>
+      <button class="tabBtn" data-tab="objectiveForm" id="objectiveTabBtn">Objective Data</button>
+    </div>
+
+    <!-- DAILY PROGRESS FORM -->
+    <form id="progressForm" class="tabSection" style="display:block;">
+      <h3 class="form-title">Daily Progress Notes</h3>
+      <div class="form-row">
+        <label>Patient Name:</label>
+        <input type="text" id="patientName" name="patientName" readonly>
+        <label>Patient Number:</label>
+        <input type="text" id="patientNumber" name="patientNumber" readonly>
+        <label>Diagnosis:</label>
+        <input type="text" id="diagnosis" name="diagnosis" readonly>
+      </div>
+      <div class="form-row">
+        <label>Date:</label>
+        <input type="date" name="date" required>
+        <label>Treatment Time:</label>
+        <input type="text" name="treatmentTime" required placeholder="e.g., 30 min">
+        <label>Attendance:</label>
+        <input type="number" name="attendance" required min="0" max="31">
+      </div>
+      <div class="form-row">
+        <label>Pain:</label>
+        <input type="text" name="pain" placeholder="e.g., 6/10, severe">
+        <label>Location:</label>
+        <input type="text" name="location" placeholder="e.g., lower back">
+      </div>
+      <div class="form-row">
+        <label>Subjective Notes:</label>
+        <textarea name="subjectiveNotes" rows="2" style="width:230px;" placeholder="Short subjective notes here..."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Functional Improvement (%):</label>
+        <input type="number" name="functionalImprovement" min="0" max="100">
+        <label>Functional Notes:</label>
+        <input type="text" name="functionalNotes" style="width:260px;">
+      </div>
+      <div class="form-row">
+        <label>Goal Status:</label>
+        <input type="text" name="goalStatus" style="width:220px;">
+      </div>
+      <div style="margin-top:18px;">
+        <button type="submit">Save</button>
+        <button type="button" id="editBtn" disabled>Edit</button>
+        <button type="button" id="cancelEditBtn" style="display:none;">Close</button>
+      </div>
+    </form>
+
+    <!-- SUBJECTIVE DATA FORM -->
+    <form id="subjectiveForm" class="tabSection" style="display:none;">
+      <h3>Subjective Data</h3>
+      <div class="form-row">
+        <label>Chief Complaints:</label>
+        <input type="text" name="chiefComplaints" required>
+      </div>
+      <div class="form-row">
+        <label>History of Present Illness/Injury (HPI):</label>
+        <input type="date" name="hpiDate" placeholder="Date of onset">
+        <input type="text" name="mechanism" placeholder="Mechanism of injury">
+      </div>
+      <div class="form-row"><label>Past Medical History:</label><br>
+        Medications: <input type="text" name="medications">
+        Surgery: <input type="text" name="surgery">
+        Laboratory result: <input type="text" name="labs">
+        X-ray: <input type="text" name="xray">
+        MRI: <input type="text" name="mri">
+        CTSCAN: <input type="text" name="ctscan">
+        EMG-NCV: <input type="text" name="emgncv">
+        Previous Therapy: <input type="text" name="prevTherapy">
+        Treatment session/s: <input type="number" name="treatSessions">
+        Other: <input type="text" name="otherHistory">
+      </div>
+      <div class="form-row">
+        <label>Food & Drug Allergies:</label>
+        <input type="text" name="allergies">
+      </div>
+      <div class="form-row">
+        <label>Heredofamilial Dse:</label>
+        DM <input type="checkbox" name="hfDM"> (Type I <input type="checkbox" name="hfDM1"> Type II <input type="checkbox" name="hfDM2">)
+        Heart Dse <input type="checkbox" name="hfHeart"> <input type="text" name="hfHeartTxt" placeholder="specify">
+        HPN <input type="checkbox" name="hfHPN">
+        Cancer <input type="checkbox" name="hfCancer"> <input type="text" name="hfCancerTxt" placeholder="specify">
+        Arthritis <input type="checkbox" name="hfArthritis"> <input type="text" name="hfArthritisTxt" placeholder="specify">
+        Blood disorder <input type="checkbox" name="hfBlood"> <input type="text" name="hfBloodTxt" placeholder="specify">
+        Lung <input type="checkbox" name="hfLung"> <input type="text" name="hfLungTxt" placeholder="specify">
+        Other <input type="checkbox" name="hfOther"> <input type="text" name="hfOtherTxt" placeholder="specify">
+      </div>
+      <div class="form-row"><label>Home Situation:</label>
+        <input type="text" name="homeSituation">
+      </div>
+      <div class="form-row"><label>Patient Goal/s:</label>
+        <input type="text" name="patientGoals">
+      </div>
+      <div style="margin-top:18px;">
+        <button type="submit">Save</button>
+        <button type="button" id="subjectiveEditBtn" disabled>Edit</button>
+      </div>
+    </form>
+
+    <!-- OBJECTIVE DATA FORM -->
+    <form id="objectiveForm" class="tabSection" style="display:none;">
+      <h3>Objective Data</h3>
+      <div class="form-row">
+        <label>Ocular Inspection: Sensorium</label>
+        <label><input type="checkbox" name="sensorium" value="alert"> alert</label>
+        <label><input type="checkbox" name="sensorium" value="drowsy"> drowsy</label>
+        <label><input type="checkbox" name="sensorium" value="lethargic"> lethargic/stuporous</label>
+        <label><input type="checkbox" name="sensorium" value="semicoma"> semi-coma</label>
+        <label><input type="checkbox" name="sensorium" value="coma"> coma</label>
+      </div>
+      <div class="form-row">
+        <label>Bodily Build:</label>
+        <label><input type="checkbox" name="bodyBuild" value="ectomorph"> ectomorph</label>
+        <label><input type="checkbox" name="bodyBuild" value="mesomorph"> mesomorph</label>
+        <label><input type="checkbox" name="bodyBuild" value="endomorph"> endomorph</label>
+      </div>
+      <div class="form-row">
+        <label>Oriented to:</label>
+        <label><input type="checkbox" name="orientedTo" value="person"> person</label>
+        <label><input type="checkbox" name="orientedTo" value="place"> place</label>
+        <label><input type="checkbox" name="orientedTo" value="time"> day/time of day</label>
+        <input type="text" name="orientedNotes" placeholder="Details">
+      </div>
+      <!-- Continue all your inputs for inspection, palpation, etc. as in your original UX requirements -->
+      <div style="margin-top:18px;">
+        <button type="submit">Save</button>
+        <button type="button" id="objectiveEditBtn" disabled>Edit</button>
+      </div>
+    </form>
+
+    <h3 style="margin-top:38px;">Record History (Progress Notes only)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Treatment Time</th>
+          <th>Attend</th>
+          <th>Diagnosis</th>
+          <th>Pain</th>
+          <th>Location</th>
+          <th>Subjective</th>
+          <th>Functional %</th>
+          <th>Functional Notes</th>
+          <th>Goal Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="recordsTableBody">
+        <!-- dynamically filled -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal for Viewing Record History -->
+  <div id="recordModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <button id="closeRecordModal" style="position:absolute;top:1rem;right:1rem;">✖</button>
+      <div id="modalRecordContent"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    // --- Tab Switcher UI (works for any number of tabs)---
+    document.querySelectorAll('.tabBtn').forEach(btn => {
+      btn.onclick = function() {
+        document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tabSection').forEach(sec => sec.style.display = 'none');
+        document.getElementById(btn.dataset.tab).style.display = 'block';
+      };
+    });
+    // Close (back) button
+    const closeMedicalRecordsBtn = document.getElementById('closeMedicalRecords');
+    if(closeMedicalRecordsBtn){
+      closeMedicalRecordsBtn.onclick = function(){
+        window.location.href = 'therapist-dashboard.html?section=patientList';
+      };
+    }
+  </script>
+  <script src="medical-records.js"></script>
+</body>
+</html>
